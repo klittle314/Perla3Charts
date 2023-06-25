@@ -1,5 +1,5 @@
 # Perla, Provost, and Murray style Charts
-Rmarkdown for Perla et al. style charts to illustrate importance of time order
+
 Perla, R. J., Provost, L. P., Murray, S. K. The run chart: a simple analytical tool for learning from variation in healthcare processes. 
 BMJ Quality & Safety, 2011, 20, pp. 46-51 showed a triplet of graphs that have identical summary statistics.
 
