@@ -50,9 +50,11 @@ y_var_name <- "MT CO2e"
 - Numbers help answer Question 2 of the M4I.
 
 ![developed by Associates in Process Improvement](images/M4I.png)
+# Acknowledgement
 
-<!-- # image from file -->
+The three charts and explanations are based on the presentation in this paper:
 
+Perla, R. J., Provost, L. P., Murray, S. K. The run chart: a simple analytical tool for learning from variation in healthcare processes. **BMJ Quality & Safety**, 2011, 20, pp. 46-51.
 
 ## Don't Be Fooled by Table Summaries
 
@@ -373,7 +375,7 @@ You can calculate the median using Excel if you have a lot of numbers.  For exam
 - Once you know the median, you can learn to apply a few simple statistical rules.  The rules help you find patterns that are not likely to arise just by chance.  These "low chance" patterns are clues that your operations may have changed--either by something you did on purpose or from some other cause.
 
 ::: notes
-I can show you the graphical approach on the graph from `r unit_name` A.  Grab a rectangle shape from the insert menu and stretch the top of the box until we get to between the 6th and 7th values in 2021.
+We can show the graphical approach on the graph from `r unit_name` A.  Grab a rectangle shape from the insert menu and stretch the top of the box until we get to between the 6th and 7th values in 2021.
 :::
 
 
