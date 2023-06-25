@@ -43,18 +43,21 @@ y_var_name <- "MT CO2e"
 
 ```
 
-### IHI makes a big deal of asking you for numbers
+## IHI makes a big deal of asking you for numbers
 
 - Our ask:  collect and report data on measures–-monthly or weekly time steps.  
   
 - Why? Show evidence that your changes to operations drive changes in performance.
 
-- Numbers help answer Question 2 of the M4I.
+- Numbers help answer Question 2 of the Model for Improvement.
+
+## The Model for Improvement
 
 ![developed by Associates in Process Improvement](images/M4I.png)
-# Acknowledgement
 
-The three charts and explanations are based on the presentation in this paper:
+## Acknowledgement
+
+The charts and explanation shown in this presentation are based on this paper: 
 
 Perla, R. J., Provost, L. P., Murray, S. K. The run chart: a simple analytical tool for learning from variation in healthcare processes. **BMJ Quality & Safety**, 2011, 20, pp. 46-51.
 
@@ -152,7 +155,7 @@ p_perla <- function(df,
     }
     
   } else {
-    p_out <- p1 + labs(title = paste0(unit_name, " ", unit,": ", measure_topic0), y = y_var_name)
+    p_out <- p1 + labs(title = paste0(unit_name, " ", unit,": ", measure_label), y = y_var_name)
   }
   
   return(p_out)
@@ -324,7 +327,7 @@ p_stack <- ggplot(data = df1, aes(x = Date, y = y))+
               geom_line()+
               facet_wrap(unit_name0, ncol = 1)+
               geom_vline(xintercept = as.Date("2021-12-15"), linetype = "dashed") +
-            labs(title = measure_topic,
+            labs(title = measure_label,
                  subtitle = paste0(unit_name,"s A, B, and C changed operations in Dec. 2021"))
     
 #annotate("text", x = c(as.Date("2021-06-15"),as.Date("2022-06-15")),
@@ -361,7 +364,7 @@ p_out
 ```
 
 
-
+# Appendix:  Background details
 
 ## What is the median of a set of values?
 
@@ -377,10 +380,9 @@ You can calculate the median using Excel if you have a lot of numbers.  For exam
 - Once you know the median, you can learn to apply a few simple statistical rules.  The rules help you find patterns that are not likely to arise just by chance.  These "low chance" patterns are clues that your operations may have changed--either by something you did on purpose or from some other cause.  
 
 ::: notes
-1. The paper by Perla, Provost and Murray introduce four rules.  The trend and shift rules should only be applied to short series (n <= 20) as the probability of seeing a trend or shift signal is an increasing function of the length of the series.  For longer series, the number of runs rule will still apply.  Alternatively, you should consider constructing an appropriate control chart.  
+- We can show the graphical approach to finding the median on the graph from `r unit_name` A.  Grab a rectangle shape from the insert menu and stretch the top of the box until we get to between the 6th and 7th values in 2021.
 
-
-2. We can show the graphical approach to finding the median on the graph from `r unit_name` A.  Grab a rectangle shape from the insert menu and stretch the top of the box until we get to between the 6th and 7th values in 2021.
+- The paper by Perla, Provost and Murray introduce four rules.  The trend and shift rules should only be applied to short series (n <= 20) as the probability of seeing the trend or shift signal given by the authors is an increasing function of the length of the series.  For longer series, the number of runs rule will still apply.  Alternatively, you should consider constructing an appropriate control chart. 
 :::
 
 
@@ -406,15 +408,17 @@ If you can propose changes to work and analyze performance **weekly** then the t
 
 Time Steps:   years, quarters, months, weeks, days, 8-hour shifts, hours, ... decrease by a median factor of 4.
 
+[click here for more discussion of the Kelleher Rule](https://www.iecodesign.com/blog/2016/8/9/applying-the-kelleher-rule-to-improve-improvement-projects)
+
 ::: notes
 
 When you track numbers in a table or add dots to a plot, a daily value gives you a sense of trends or shifts within the week, especially if you have past weeks for reference. This is the logic behind use of specific rules for run charts. 
 
 It’s also usually a good idea not to react to a single data point unless the single point is very unusual. Control charts are one class of tools to judge whether an individual point is unusual enough to justify a rational response through detective work and action. 
 
-Prospectively, if you make a change to the system or process, you’d like to have evidence that the change is working or not relatively quickly—and quickness again is relative to your management capacity. If you have a weekly management stand-up review meeting and make a change on Monday, Kelleher’s rule guides you to get data daily to assess impact of your change to inform next week’s review.
+Prospectively, if you make a change to the system or process, you’d like to have evidence relatively quickly that the change is working or not.  Quickness again is relative to your management capacity. If you have a weekly management stand-up review meeting and make a change on Monday, Kelleher’s rule guides you to get data daily to assess impact of your change to inform next week’s review.
+
+
+
 
 :::
-
-[click here for more discussion of the Kelleher Rule] (https://www.iecodesign.com/blog/2016/8/9/applying-the-kelleher-rule-to-improve-improvement-projects)
-
