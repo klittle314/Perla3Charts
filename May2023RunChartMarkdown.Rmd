@@ -251,7 +251,7 @@ knitr::kable(table2, caption = caption_main_table, col.names = c(unit_name, "Yea
 
 ## Case A What do you see in the data display?
 
-- The time series graph for `r unit_label` A shows the monthly values summarized in the table on the previous slide.   
+- The time series graph for `r unit_name` A shows the monthly values summarized in the table on the previous slide.   
 - Does the graph support the belief that the change in December 2021 improved performance, 2022 vs 2021?
 
 ```{r plain_plot}
