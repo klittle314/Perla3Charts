@@ -35,7 +35,9 @@ unit_name <- "Hospital"
 
 caption_main_table <- "Yearly Summary Report:  MT CO2e impact, three hospitals"
 
-measure_topic <- "CO2e from activity X"
+measure_description <- "tons of CO2e"
+
+measure_label <- "CO2e from activity X"
 
 y_var_name <- "MT CO2e"
 
@@ -58,9 +60,9 @@ Perla, R. J., Provost, L. P., Murray, S. K. The run chart: a simple analytical t
 
 ## Don't Be Fooled by Table Summaries
 
-- The simulated situation:  Hospitals A, B, and C each have summarized tons of CO2e associated with their operations month by month in 2021 and 2022.  
+- The simulated situation:  `r unit_name` A, B, and C each have summarized tons of CO2e associated with their operations month by month in 2021 and 2022.  
 
-- Each hospital tested and changed operations in December 2021, with the aim of decreasing CO2e emissions.  
+- Each `r unit_name` tested and changed operations in December 2021, with the aim of decreasing CO2e emissions.  
 
 - Each of the three hospitals produce *exactly* the same summary table.  
 
@@ -115,7 +117,7 @@ make_perla_df <- function(y1,y2, good_direction = good_direction_up){
 p_perla <- function(df, 
                     unit, 
                     enhanced = TRUE, 
-                    measure_topic0 = measure_topic, 
+                    measure_label0 = measure_label, 
                     good_direction = good_direction_up,
                     text_y_coord0 = text_y_coord) {
   p1 <- ggplot(data = df, aes(x = Date, y = y)) +
@@ -124,7 +126,7 @@ p_perla <- function(df,
     geom_line()
   
   if(enhanced) {
-    p1 <- p1 + labs(title = paste0(unit_name, " ", unit,": ", measure_topic0),
+    p1 <- p1 + labs(title = paste0(unit_name, " ", unit,": ", measure_label0),
          subtitle = "Change in workflow mid-December 2021",
          caption = "Horizontal lines: 2021 and 2022 monthly medians",
          y = y_var_name) +
@@ -249,7 +251,7 @@ knitr::kable(table2, caption = caption_main_table, col.names = c(unit_name, "Yea
 
 ## Case A What do you see in the data display?
 
-- The time series graph for Hospital A shows the monthly values summarized in the table on the previous slide.   
+- The time series graph for `r unit_label` A shows the monthly values summarized in the table on the previous slide.   
 - Does the graph support the belief that the change in December 2021 improved performance, 2022 vs 2021?
 
 ```{r plain_plot}
@@ -371,11 +373,14 @@ You can calculate the median using Excel if you have a lot of numbers.  For exam
 ## Why do we use medians in our improvement project graphs?
 
 - The median isn't affected by a few whacky values.
-- You can calculate the median GRAPHICALLY--it's easy to estimate if it is missing.
-- Once you know the median, you can learn to apply a few simple statistical rules.  The rules help you find patterns that are not likely to arise just by chance.  These "low chance" patterns are clues that your operations may have changed--either by something you did on purpose or from some other cause.
+- You can calculate the median GRAPHICALLY--it's easy to estimate if it is missing from a time series graph.
+- Once you know the median, you can learn to apply a few simple statistical rules.  The rules help you find patterns that are not likely to arise just by chance.  These "low chance" patterns are clues that your operations may have changed--either by something you did on purpose or from some other cause.  
 
 ::: notes
-We can show the graphical approach on the graph from `r unit_name` A.  Grab a rectangle shape from the insert menu and stretch the top of the box until we get to between the 6th and 7th values in 2021.
+1. The paper by Perla, Provost and Murray introduce four rules.  The trend and shift rules should only be applied to short series (n <= 20) as the probability of seeing a trend or shift signal is an increasing function of the length of the series.  For longer series, the number of runs rule will still apply.  Alternatively, you should consider constructing an appropriate control chart.  
+
+
+2. We can show the graphical approach to finding the median on the graph from `r unit_name` A.  Grab a rectangle shape from the insert menu and stretch the top of the box until we get to between the 6th and 7th values in 2021.
 :::
 
 
@@ -412,8 +417,4 @@ Prospectively, if you make a change to the system or process, you’d like to ha
 :::
 
 [click here for more discussion of the Kelleher Rule] (https://www.iecodesign.com/blog/2016/8/9/applying-the-kelleher-rule-to-improve-improvement-projects)
-
-## Reference
-
-Perla, R. J., Provost, L. P., Murray, S. K. The run chart: a simple analytical tool for learning from variation in healthcare processes. **BMJ Quality & Safety**, 2011, 20, pp. 46-51.
 
