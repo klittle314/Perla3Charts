@@ -1,8 +1,10 @@
-![image](https://github.com/klittle314/Perla3Charts/assets/3459577/a24ce6f4-60ba-4553-9993-9aa767ce8e1d)# Perla3Charts
+# Perla, Provost, and Murray style Charts
 Rmarkdown for Perla et al. style charts to illustrate importance of time order
 Perla, R. J., Provost, L. P., Murray, S. K. The run chart: a simple analytical tool for learning from variation in healthcare processes. 
 BMJ Quality & Safety, 2011, 20, pp. 46-51 showed a triplet of graphs that have identical summary statistics.
 
-They make the point that time order is critical for causal analysis in quality improvement.
+While the main point of their article describes probability-based rules to identify unusual patterns of runs in time-series plots, their triplet of graphs demonstrates the importance of time-order plots in assessing evidence for a change in a system's performance.  
 
-I created an RMarkdown script to generate examples similar to their presentation, allowing the user to create graphs with "up" or "down" as the good direction and to customize labels to match a user's situation.
+The Perla, Provost, and Murray presentation recalls the graphical example provided by Frank Anscombe, known as Anscombe's quartet:  four graphs with very different appearances that yield the same statistical summaries.  [click here for the Wikipedia entry](https://en.wikipedia.org/wiki/Anscombe%27s_quartet)
+
+I created an RMarkdown script to generate examples similar to the Perla, Provost and Murray presentation.  The script allows the user to create graphs with "up" or "down" as the good direction and to customize variable name and unit lable to match a user's situation.
