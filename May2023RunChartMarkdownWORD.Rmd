@@ -1,6 +1,6 @@
 ---
 title: "Plot Dots and Add labels"
-subtitle: "IHI Decarbonization Learning Session June 2023"
+#subtitle: "IHI Decarbonization Learning Session June 2023"
 author: "Kevin Little"
 date: "`r Sys.Date()`"
 #output: html_document
