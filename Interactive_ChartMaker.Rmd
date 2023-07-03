@@ -8,7 +8,7 @@ runtime: shiny
 
 ### Introduction to the Perla-Provost-Murray Triplet of Graphs
 
-In 2011, Perla, Provost and Murray published an article that promoted the use of run charts as an accessible and powerful tool (Perla, R. J., Provost, L. P., Murray, S. K. The run chart: a simple analytical tool for learning from variation in healthcare processes. BMJ Quality & Safety, 2011, 20, pp. 46-51). 
+In 2011, Perla, Provost and Murray published an article that promotes the use of run charts as an accessible and powerful tool (Perla, R. J., Provost, L. P., Murray, S. K. The run chart: a simple analytical tool for learning from variation in healthcare processes. BMJ Quality & Safety, 2011, 20, pp. 46-51). 
 
 The body of the article describes simple probability-based rules to identify unusual patterns of runs in time-series plots.  Unusual patterns that correspond to intentional actions provide evidence of causal impact.
 
