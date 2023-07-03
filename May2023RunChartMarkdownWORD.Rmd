@@ -1,0 +1,394 @@
+---
+title: "Plot Dots and Add labels"
+subtitle: "IHI Decarbonization Learning Session June 2023"
+author: "Kevin Little"
+date: "`r Sys.Date()`"
+#output: html_document
+output: word_document
+---
+
+### Perla, Provost, and Murray style Charts
+
+In 2011, Perla, Provost and Murray published an article that promoted the use of run charts as an accessible and powerful tool (Perla, R. J., Provost, L. P., Murray, S. K. The run chart: a simple analytical tool for learning from variation in healthcare processes. BMJ Quality & Safety, 2011, 20, pp. 46-51). 
+
+The body of the article describes simple probability-based rules to identify unusual patterns of runs in time-series plots.  Unusual patterns that correspond to intentional actions provide evidence of causal impact.
+
+The authors make a compelling case for plotting data in time-order rather than relying on summary values of performance before and after a change that is intended to improve performance.   They show a triplet of graphs that have the same summary statistics for values before and after the change.   However, the appearance of the graphs are very different.   Only one graph appears to unambiguously correspond to a simple interpretation that the change causes a step-change in performance.  
+
+The Perla, Provost, and Murray presentation recalls the graphical example provided by Frank Anscombe, known as Anscombe's quartet:  four graphs with very different appearances that yield the same statistical summaries.  Click [here](https://en.wikipedia.org/wiki/Anscombe%27s_quartet) for a description of Anscombe's quartet.
+
+I created an RMarkdown script that generates examples similar to the Perla, Provost and Murray triplet.  Starting with 24 random numbers divided into two batches of size 12, the script allows the user to create graphs with "up" or "down" as the good direction and to customize variable name and unit label that match the user's applications.
+
+<br>
+
+#### Measurement as a guide to operations control and improvement
+  
+- Why plot dots from your operations in time order?  The plots help you see whether your operation continues to perform as expected or shows effects of unplanned changes in performance.   If you are making purposeful changes to operations, do these changes drive changes in the patterns of the dots?
+
+- Plotted numbers help answer Question 2 of the Model for Improvement.
+
+<br>
+
+#### The Model for Improvement
+
+![developed by Associates in Process Improvement](images/smallM4I.png)
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+library(tidyverse)
+library(patchwork)
+
+
+good_direction_up <- FALSE
+
+text_y_coord_up <- c(70,50)
+
+text_y_coord_down <- c(50,70)
+
+if(good_direction_up) {
+  
+  text_y_coord <- text_y_coord_up
+  
+} else {
+  
+  text_y_coord <- text_y_coord_down 
+}
+
+
+unit_name <- "Hospital"
+
+caption_main_table <- "Yearly Summary Report:  MT CO2e impact, three hospitals"
+
+measure_description <- "tons of CO2e"
+
+measure_label <- measure_description
+
+y_var_name <- measure_description
+
+```
+
+
+
+## Acknowledgement
+
+The charts and explanation shown in this presentation are based on this paper: 
+
+Perla, R. J., Provost, L. P., Murray, S. K. The run chart: a simple analytical tool for learning from variation in healthcare processes. **BMJ Quality & Safety**, 2011, 20, pp. 46-51.
+
+## Don't Be Fooled by Table Summaries
+
+- The simulated situation:  units A, B, and C each have summarized the performance associated with their operations month by month in 2021 and 2022.  
+
+- Each unit tested and changed operations in December 2021, with the aim of improving performance. 
+
+- Each of the three units produces *exactly* the same summary performance.  
+
+- Does it look like reviewers should get excited about the impact of December 2021's change?  
+
+<br>
+
+
+
+```{r make_perla, echo = FALSE, message = FALSE, warning = FALSE}
+
+set.seed(123)
+y2 <- round(rnorm(n = 12, mean = 70, sd = 10),0)
+y1 <- round(rnorm(n = 12, mean = 30, sd = 10),0) + 10
+
+make_perla_df <- function(y1,y2, good_direction = good_direction_up){
+      
+  if(good_direction){
+      y <- c(y1,y2)
+      
+      median_y1 <- c(rep(median(y1),12), rep(NA, 12))
+      
+      median_y2 <- c(rep(NA, 12), rep(median(y2), 12))
+      
+  } else {
+      y <- c(y2,y1)
+      
+      median_y1 <- c(rep(median(y2),12), rep(NA, 12))
+      
+      median_y2 <- c(rep(NA, 12), rep(median(y1), 12))
+  }   
+      
+      
+      epoch <- c(rep_len("Before", length.out = 12), rep_len("After", length.out = 12))
+      
+      xA <- seq.Date(from = as.Date("2021-01-01"), length.out = 24, by = "month")
+      
+      df_perla <- cbind.data.frame(Date = xA, y = y,epoch = epoch, 
+                                   median1 = median_y1,
+                                   median2 = median_y2)
+
+      t_test_out <- t.test(y1, y2, var.equal=TRUE)
+      
+      list_out <- list(df=df_perla, t_test = t_test_out)
+}
+
+
+
+
+
+#`DM pts seen by Dental`
+# this function uses a data frame that has the structure created
+# by the function make_perla_df
+p_perla <- function(df, 
+                    unit, 
+                    enhanced = TRUE, 
+                    measure_label0 = measure_label, 
+                    good_direction = good_direction_up,
+                    text_y_coord0 = text_y_coord) {
+  p1 <- ggplot(data = df, aes(x = Date, y = y)) +
+    theme_bw()+
+    geom_point(size = rel(2.5))+
+    geom_line()
+  
+  if(enhanced) {
+    p1 <- p1 + labs(title = paste0(unit_name, " ", unit,": ", measure_label0),
+         subtitle = "Change in workflow mid-December 2021",
+         caption = "Horizontal lines: 2021 and 2022 monthly medians",
+         y = y_var_name) +
+    geom_vline(xintercept = as.Date("2021-12-15"), linetype = "dashed")+
+    annotate("text", x = c(as.Date("2021-06-15"),as.Date("2022-06-15")),
+             y = text_y_coord0, label = c("Before Change", "After Change"))
+    
+    p1.1 <- p1 + geom_line(data = df, aes(x = Date, y = median1))
+  
+    p_out <- p1.1 + geom_line(data = df, aes(x = Date, y = median2)) 
+
+      # annotate("segment",x = x_arrow, xend = x_arrow, y = 3, yend = 3.3) +
+   if(good_direction) {
+    p_out <- p_out + annotate("segment",
+        x = as.Date("2021-03-15"), xend = as.Date("2021-03-15"), y = 75, yend = 85,
+        colour = "blue", arrow = arrow(type = "closed", length = unit(.2, "cm"))) +  
+      geom_text(label = "better", x = as.Date("2021-02-01"), y = 80) 
+   } else {
+      p_out <- p_out + annotate("segment",
+        x = as.Date("2022-03-15"), xend = as.Date("2022-03-15"), y = 85, yend = 75,
+        colour = "blue", arrow = arrow(type = "closed", length = unit(.2, "cm"))) +
+        geom_text(label = "better", x = as.Date("2022-02-01"), y = 80)
+    }
+    
+  } else {
+    p_out <- p1 + labs(title = paste0(unit_name, " ", unit,": ", measure_label), y = y_var_name)
+  }
+  
+  return(p_out)
+  
+}
+
+
+
+#Make Case 2:  no effect of change
+
+y1_sort <- sort(y1)
+
+y1_resort <- y1_sort[c(1,3,2,4,5,6,8,7,9,11,10,12)]
+
+y1_resort_rev <- rev(y1_resort)
+
+y2_sort <- sort(y2)
+
+y2_resort <- y2_sort[c(3,2,1,4,6,5,7,8,9,11,10,12)]
+
+y2_resort_rev <- rev(y2_resort)
+
+
+
+#Case 3 Decay
+y1_new <- sample(y1, 12)
+y1_new <- sample(y1_new,12)
+y1_new <- sample(y1_new,12)
+
+y2_new <- sample(y2, 12)
+
+y2_decay <- y2[c(7,11,6,3,12,4,2,5,1,9,10,8)]
+
+y1_new_decay <- y1_new[c(12,1,5,8,9,2,3,4,11,10,6,7)]
+
+
+
+#case 1 logic handled by make_perla function
+case1 <- make_perla_df(y1= y1, y2 = y2)
+
+if(good_direction_up) {
+ 
+  case2 <- make_perla_df(y1= y1_resort, y2 = y2_resort)
+  
+  case3 <- make_perla_df(y1 = y1_new, y2 = y2_decay)
+  
+} else {
+  case2 <- make_perla_df(y1= y1_resort_rev, y2 = y2_resort_rev)
+  
+  case3 <- make_perla_df(y1 = y1_new_decay, y2 = y2_new)
+  
+}
+
+p11 <- p_perla(df = case1$df, unit = "A")
+
+p21 <- p_perla(df = case2$df, unit = "B")
+
+p31 <- p_perla(df = case3$df, unit = "C")
+```
+
+```{r table, echo = FALSE, warning = FALSE, message = FALSE}
+
+mean1 <- round(mean(y1),1)
+
+mean2 <- round(mean(y2),1)
+
+median1 <- median(y1)
+
+median2 <- median(y2)
+
+if(good_direction_up) {
+
+  table1 <- data.frame(Year = c("2021", "2022"), Total = 12*c(mean1, mean2), `Monthly Average` = c(mean1, mean2),
+                       `Monthly Median` = c(median1, median2))
+} else {
+  table1 <- data.frame(Year = c("2021", "2022"), Total = 12*c(mean2, mean1), `Monthly Average` = c(mean2, mean1),
+                       `Monthly Median` = c(median2, median1))
+}
+
+#Make table repeated:  A    B      C
+health_center <- c(rep.int("A",2), rep.int("B",2), rep.int("C",2))
+
+table2 <- rbind.data.frame(table1, table1, table1) %>% 
+            bind_cols(health_center) 
+
+names(table2)[5] <- unit_name
+
+table2 <- table2 %>% relocate(!!unit_name)
+            
+
+knitr::kable(table2, caption = caption_main_table, col.names = c(unit_name, "Year","Total", "Monthly Average", "Monthly Median"))
+
+```
+
+### Plot Dots
+
+#### Unit A: What do you see in the data display?
+
+- The time series graph for unit A shows the monthly values summarized in the table above.   
+- Does the graph support the belief that the change in December 2021 improved performance, 2022 vs 2021?
+- Unit A's graph, with a step-change in the better direction, seems like the graph many of us would expect to see in light of the summary table.
+
+```{r plain_plot}
+
+p0 <- p_perla(df = case1$df, unit = "A", enhanced = FALSE)
+
+p0
+
+```
+
+### Add labels to make it easier to see the story in the numbers!
+
+- Does the graph support the belief that the change in December 2021 improved performance, 2022 vs 2021?
+- Adding words, the line to mark the change in workflow, the median 2021 and 2022 values, and the "better" direction arrow help you contrast your belief with the data.
+
+```{r caseA, echo = FALSE, fig.height = 4, warning = FALSE}
+
+p11
+
+```
+
+### Unit B  What do you see in the data display?
+
+- Does the graph support the belief that the change in December 2021 improved performance, 2022 vs 2021?
+
+- How does the pattern in this graph differ from the graph of unit A's data?
+
+- While Unit B has the same summary statistics that might support improvement in 2022 versus 2021, the graph tells a very different story.
+
+- The pattern in the graph for Unit B suggests that improved performance is not associated in a simple way with the change in December 2021.  The change in December 2021 may not have anything to do with the improvement.
+
+```{r caseB, echo = FALSE, fig.height = 4, warning = FALSE}
+
+p21
+
+```
+
+### Unit C  What do you see in the data display?
+
+- Does the graph support the belief that the change in December 2021 improved performance, 2022 vs 2021?
+
+- How does the pattern in this graph differ from the graphs of data from units A and B?
+
+- The pattern in the graph for unit C is easily recognized:  a temporary improvement associated with a change and then decay in performance.   Turnover in staff who use the change, shift in management priorities, fatigue from extra effort to support a temporary fix are just a few causes that people offer in describing the pattern in this graph. 
+
+```{r plotC, echo = FALSE, warning = FALSE, fig.height = 4}
+
+p31
+
+
+
+
+```
+
+#### In our collaborative work, we often compare related units in one display
+- You can shrink graphs to show several in one display; it helps if the scales are all aligned.
+
+- You can quickly compare patterns and look for differences. 
+
+- Here's a stack of the graphs from units A, B, C.
+
+
+```{r  summary, echo = FALSE, fig.height = 8, fig.width = 6, warning = FALSE}
+#pivot longer and then facet graph to make it look like Shiny
+
+df1 <- bind_rows(case1$df,case2$df,case3$df, .id = unit_name) 
+
+df1[,1] <- gsub("1", "A", df1[,1])
+df1[,1] <- gsub("2", "B", df1[,1])
+df1[,1] <- gsub("3", "C", df1[,1])
+
+unit_name0 <- dplyr::sym(unit_name)
+
+p_stack <- ggplot(data = df1, aes(x = Date, y = y))+  
+              theme_bw()+
+              geom_point(size = rel(2.5))+
+              geom_line()+
+              facet_wrap(unit_name0, ncol = 1)+
+              geom_vline(xintercept = as.Date("2021-12-15"), linetype = "dashed") +
+            labs(title = measure_label,
+                 subtitle = paste0(unit_name,"s A, B, and C changed operations in Dec. 2021"))
+    
+#annotate("text", x = c(as.Date("2021-06-15"),as.Date("2022-06-15")),
+             #y = c(70,50), label = c("Before Change", "After Change")) 
+
+
+  p_stack1 <- p_stack + geom_line(data = df1, aes(x = Date, y = median1))
+  
+  p_stack2 <- p_stack1 + geom_line(data = df1, aes(x = Date, y = median2)) +   theme(strip.text.x = element_text(size = 16)) + labs(y = y_var_name)
+  
+  if(good_direction_up){
+  
+     p_out <- p_stack2 +
+    
+      geom_text(label = "better", x = as.Date("2021-02-01"), y = 80) +
+
+      # annotate("segment",x = x_arrow, xend = x_arrow, y = 3, yend = 3.3) +
+
+      annotate("segment",
+        x = as.Date("2021-03-15"), xend = as.Date("2021-03-15"), y = 75, yend = 85,
+        colour = "blue", arrow = arrow(type = "closed", length = unit(.2, "cm"))
+      )
+  } else {
+   p_out <- p_stack2 +
+    
+      annotate("segment",
+        x = as.Date("2022-03-15"), xend = as.Date("2022-03-15"), y = 85, yend = 75,
+        colour = "blue", arrow = arrow(type = "closed", length = unit(.2, "cm")) +
+        geom_text(label = "better", x = as.Date("2022-02-01"), y = 80)
+      )
+  }
+  
+p_out
+```
+
+
+
+
+
+
+:::
