@@ -15,7 +15,7 @@ library(tidyverse)
 library(patchwork)
 
 
-good_direction_up <- FALSE
+good_direction_up <- TRUE
 
 text_y_coord_up <- c(70,50)
 
@@ -37,9 +37,9 @@ caption_main_table <- "Yearly Summary Report:  MT CO2e impact, three hospitals"
 
 measure_description <- "tons of CO2e"
 
-measure_label <- "CO2e from activity X"
+measure_label <- measure_description
 
-y_var_name <- "MT CO2e"
+y_var_name <- measure_description
 
 ```
 
@@ -67,7 +67,7 @@ Perla, R. J., Provost, L. P., Murray, S. K. The run chart: a simple analytical t
 
 - Each `r unit_name` tested and changed operations in December 2021, with the aim of decreasing CO2e emissions.  
 
-- Each of the three hospitals produce *exactly* the same summary table.  
+- Each of the three `r unit_name`s produce *exactly* the same summary table.  
 
 - Does it look like our community should get excited about the impact of December 2021's change?  
 
